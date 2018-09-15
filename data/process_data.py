@@ -62,8 +62,8 @@ def save_data(df, database_filename):
         database_filename: Name of the database file
     """
 
-    engine = create_engine('sqlite:///etlProject.db')
-    df.to_sql(database_filename, engine, index=False)
+    engine = create_engine('sqlite:///'+ database_filename)
+    df.to_sql('cleanData', engine, index=False)
 
 
 def main():

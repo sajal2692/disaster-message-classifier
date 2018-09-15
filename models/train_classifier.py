@@ -1,5 +1,21 @@
 import sys
+import pickle
 
+import nltk
+nltk.download(['punkt', 'wordnet'])
+nltk.download('stopwords')
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+import pandas as pd
+from sqlalchemy import create_engine
+from nltk.corpus import stopwords
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 def load_data(database_filepath):
     pass
@@ -27,13 +43,13 @@ def main():
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-        
+
         print('Building model...')
         model = build_model()
-        
+
         print('Training model...')
         model.fit(X_train, Y_train)
-        
+
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
 
