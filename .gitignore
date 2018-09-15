@@ -1,2 +1,4 @@
-final_model.pkl
-
+models/*.pkl
+data/*.db
+.ipynb_checkpoints
+*.ipynb
