@@ -18,23 +18,91 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 def load_data(database_filepath):
-    pass
+    """
+    Loads data from database
+
+    Args:
+        database_filepath: path to database
+
+    Returns:
+        (DataFrame) X: feature
+        (DataFrame) Y: labels
+
+    """
+    engine = create_engine('sqlite:///' + database_filepath)
+    df = pd.read_sql_query('select * from cleanData', engine)
+
+    X = df['message'].values
+    y = df.drop(['id','message','original','genre'], axis=1)
+    category_names = y.columns
+    return X, y, category_names
 
 
 def tokenize(text):
-    pass
+    """
+    Tokenizes a given text.
+
+    Args:
+        text: text string
+
+    Returns:
+        (str[]): array of clean tokens
+
+    """
+    tokens = word_tokenize(text)
+    lemmatizer = WordNetLemmatizer()
+
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
+    clean_tokens = [w for w in clean_tokens if w not in stopwords.words("english")]
+
+    return clean_tokens
 
 
 def build_model():
-    pass
+    """Builds classification model """
+
+    pipeline = Pipeline([
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+    ])
+
+    parameters = {
+        'vect__ngram_range': ((1, 1), (1, 2)),
+        'clf__estimator__min_samples_split': [2, 4],
+    }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2, n_jobs=4)
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    """
+    Evaluate the model against a test dataset
+
+    Args:
+        model: Trained model
+        X_test: Test features
+        Y_test: Test labels
+        category_names: String array of category names
+    """
+    y_preds = model.predict(X_test)
+    print(classification_report(y_preds, Y_test.values, target_names=category_names))
 
 
 def save_model(model, model_filepath):
-    pass
+    """
+    Save the model to a Python pickle
+
+    Args:
+        model: Trained model
+        model_filepath: Path where to save the model
+    """
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():

@@ -2,3 +2,4 @@ models/*.pkl
 data/*.db
 .ipynb_checkpoints
 *.ipynb
+*.db
