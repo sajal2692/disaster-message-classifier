@@ -57,8 +57,6 @@ def tokenize(text):
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
         clean_tokens.append(clean_tok)
 
-    clean_tokens = [w for w in clean_tokens if w not in stopwords.words("english")]
-
     return clean_tokens
 
 
