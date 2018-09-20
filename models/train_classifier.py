@@ -11,7 +11,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from nltk.corpus import stopwords
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
@@ -90,6 +90,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
     """
     y_preds = model.predict(X_test)
     print(classification_report(y_preds, Y_test.values, target_names=category_names))
+    print("**** Accuracy scores for each category *****\n")
+    for i in range(36):
+        print("Accuracy score for " + Y_test.columns[i], accuracy_score(Y_test.values[:,i],y_preds[:,i]))
 
 
 def save_model(model, model_filepath):
