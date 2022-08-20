@@ -8,12 +8,11 @@ def load_data(messages_filepath, categories_filepath):
     Loads the messages and categories datasets from the specified filepaths
 
     Args:
-        messages_filepath: Filepath to the messages dataset
-        categories_filepath: Filepath to the categories dataset
+        messages_filepath: path to the messages dataset
+        categories_filepath: path to the categories dataset
 
     Returns:
-        (DataFrame) df: Merged Pandas dataframe
-
+        df: merged pandas dataframe
     """
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
@@ -26,20 +25,24 @@ def clean_data(df):
     Cleans the merged dataset
 
     Args:
-        df: Merged pandas dataframe
+        df: pandas dataframe
 
     Returns:
-        (DataFrame) df: Cleaned dataframe
+        df: cleaned dataframe
     """
     categories = df['categories'].str.split(';',expand=True)
-    row = categories[:1]
-    category_colnames = row.apply(lambda x: x.str.split('-')[0][0], axis=0)
+    row = categories.iloc[0]
+    category_colnames = row.apply(lambda x: x.split("-")[0])
     categories.columns = category_colnames
 
     # convert category values to just numbers 0 or 1
     for column in categories:
-        categories[column] = categories[column].apply(lambda x: x.split('-')[1] if int(x.split('-')[1]) < 2 else 1)
+        # set each column value to be last character of the string
+        categories[column] = categories[column].str[-1]
+        # convert each column value to an integer
         categories[column] = categories[column].astype(int)
+        # convert values to binary
+        categories[column] = categories[column].clip(0,1)
 
     # drop the original categories column from `df`
     df.drop('categories',axis=1,inplace=True)
@@ -48,8 +51,14 @@ def clean_data(df):
     df = pd.concat([df,categories], axis=1)
 
     # drop duplicates
-    df = df.drop_duplicates(keep='first')
-
+    df.drop_duplicates(keep='first', inplace=True)
+    
+    # drop NaN messages
+    df.dropna(subset=["message"], axis=0, inplace=True) # drop the row
+    
+    # drop the id and original columns as they are not useful for the learning problem
+    df.drop(["id", "original"], axis=1, inplace=True)
+    
     return df
 
 
@@ -58,12 +67,12 @@ def save_data(df, database_filename):
     Saves clean dataset into an sqlite database
 
     Args:
-        df:  Cleaned dataframe
-        database_filename: Name of the database file
+        df:  dataframe
+        database_filename: name of the database file
     """
 
     engine = create_engine('sqlite:///'+ database_filename)
-    df.to_sql('cleanData', engine, index=False)
+    df.to_sql('messages', engine, if_exists="replace", index=False)
 
 
 def main():
