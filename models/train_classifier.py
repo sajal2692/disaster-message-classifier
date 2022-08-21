@@ -71,15 +71,16 @@ def build_model():
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(XGBClassifier()))
+        ('clf', MultiOutputClassifier(XGBClassifier(n_estimators=100)))
     ])
 
     parameters = {
-        # 'vect__ngram_range': ((1, 1), (1, 2)),
-        # 'clf__estimator__min_samples_split': [2, 4],
+        "clf__estimator__max_depth": [4, 8, 16],
+        "clf__estimator__colsample_bytree":[0.5, 0.75, 1],
+        "clf__estimator__learning_rate":[0.1,]
     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=3, n_jobs=-1)
+    cv = GridSearchCV(pipeline, cv=3, param_grid=parameters, verbose=3, n_jobs=-1, scoring="f1_micro")
     return cv
 
 
