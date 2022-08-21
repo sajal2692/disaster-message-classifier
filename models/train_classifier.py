@@ -10,11 +10,11 @@ from nltk.stem import WordNetLemmatizer
 
 import pandas as pd
 from sqlalchemy import create_engine
+from xgboost import XGBClassifier
 from nltk.corpus import stopwords
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -71,7 +71,7 @@ def build_model():
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+        ('clf', MultiOutputClassifier(XGBClassifier()))
     ])
 
     parameters = {
