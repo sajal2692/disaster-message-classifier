@@ -6,7 +6,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from models.train_classifier import tokenize
+from models.train_classifier import tokenize, STOPWORDS
 
 import plotly
 import pandas as pd
@@ -42,7 +42,7 @@ def index():
     category_names = list(category_counts.index)
 
     word_series = pd.Series(' '.join(df['message']).lower().split())
-    top_words = word_series[~word_series.isin(stopwords.words("english"))].value_counts()[:5]
+    top_words = word_series[~word_series.isin(STOPWORDS)].value_counts()[:5]
     top_words_names = list(top_words.index)
 
 
