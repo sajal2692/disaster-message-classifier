@@ -1,5 +1,6 @@
-import sys
 import pickle
+import re
+import sys
 
 import nltk
 nltk.download(['punkt', 'wordnet'])
@@ -17,6 +18,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
+
+PUNCTUATION_REGEX = re.compile(r"[^\w\s]")
+STOPWORDS = stop_words = stopwords.words('english')
+WORDNET_LEMMATIZER = WordNetLemmatizer()
+
 def load_data(database_filepath):
     """
     Loads data from database
@@ -30,12 +36,12 @@ def load_data(database_filepath):
 
     """
     engine = create_engine('sqlite:///' + database_filepath)
-    df = pd.read_sql_query('select * from cleanData', engine)
+    df = pd.read_sql_query('select * from messages', engine)
 
     X = df['message'].values
-    y = df.drop(['id','message','original','genre'], axis=1)
-    category_names = y.columns
-    return X, y, category_names
+    Y = df.drop(columns=['message','genre'], axis=1)
+    category_names = Y.columns
+    return X, Y, category_names
 
 
 def tokenize(text):
@@ -46,18 +52,17 @@ def tokenize(text):
         text: text string
 
     Returns:
-        (str[]): array of clean tokens
+        tokens: list of tokens
 
     """
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
+    
+    # lowercase string and remove punctuation
+    text = PUNCTUATION_REGEX.sub(" ", text.lower()).strip()
+    # tokenize text
+    tokens = [WORDNET_LEMMATIZER.lemmatize(token) for token in word_tokenize(text)]
+    # remove stopwords
+    tokens = [token for token in tokens if token not in STOPWORDS]
+    return tokens
 
 
 def build_model():
@@ -70,11 +75,11 @@ def build_model():
     ])
 
     parameters = {
-        'vect__ngram_range': ((1, 1), (1, 2)),
-        'clf__estimator__min_samples_split': [2, 4],
+        # 'vect__ngram_range': ((1, 1), (1, 2)),
+        # 'clf__estimator__min_samples_split': [2, 4],
     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2, n_jobs=4)
+    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=3, n_jobs=-1)
     return cv
 
 
