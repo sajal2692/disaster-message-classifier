@@ -4,13 +4,13 @@ The Disaster Message Classifier is a set of ETL & ML scripts - combined with a w
 
 This is a portfolio project, offered by Udacity, to showcase data engineering and modelling skills on a small dataset.
 
-### Files:
+## Files:
 - `data/process_data.py`: The ETL pipeline used to process data in preparation for model building.
 - `models/train_classifier.py`: The Machine Learning pipeline used to fit, tune, evaluate, and export the model to a Python pickle (pickle is not uploaded to the repo due to size constraints.).
 - `app/templates/*.html`: HTML templates for the web app.
 - `run.py`: Start the Python server for the web app and prepare visualizations.s
 
-### Instructions:
+## Instructions:
 
 1. Install dependencies using requirements.txt
     `pip install -r requirements.txt`
@@ -29,15 +29,18 @@ This is a portfolio project, offered by Udacity, to showcase data engineering an
 
 Please raise an issue if these instructions don't work for you!
 
-## Further Improvement
+## Further Improvements
 
 This repo sticks to the basics in order to provide a good baseline model for this classification task. There are plenty of room for improvement here, including but not limited to:
 
-1. Using word embeddings (GloVe, word2vec) or even sentence embeddings (Univsersal Sentence Encoder) to transform message text, instead of using a CountVectorizer. This should allow the model to generalize well to similar/unseen words and improve the model accuracy too.
+1. Using word embeddings (GloVe, word2vec) or even sentence embeddings (Univsersal Sentgence Encoder) to transform message text, instead of using a CountVectorizer. This should allow the model to generalize well to similar/unseen words and improve the model accuracy too.
 2. A Neural Network can be trained for this task. Better yet, a pre-trained state-of-the-art transformer based network can be fine tuned using the data available to us. 
 3. Certain classification categories are "noisy" such as "related" or "child alone" (no positive examples). These can either be removed, or more data can be acquired that provides enough missing examples for such cases.
 
 
-### Screenshot:
+## Screenshot:
 
 ![Classified Message](screenshots/message_classification_result.png)
+
+
+Check out my [Data Science Portfolio](https://github.com/sajal2692/data-science-portfolio) repository, or my [website](https://sajalsharma.com) for more Data Science and Machine Learning Projects.
