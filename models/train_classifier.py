@@ -1,4 +1,4 @@
-import pickle
+import joblib
 import re
 import sys
 
@@ -22,6 +22,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 PUNCTUATION_REGEX = re.compile(r"[^\w\s]")
 STOPWORDS = stop_words = stopwords.words('english')
 WORDNET_LEMMATIZER = WordNetLemmatizer()
+POS_TAGS_TO_LEMMATIZE = ["n", "v"]
 
 def load_data(database_filepath):
     """
@@ -59,7 +60,10 @@ def tokenize(text):
     # lowercase string and remove punctuation
     text = PUNCTUATION_REGEX.sub(" ", text.lower()).strip()
     # tokenize text
-    tokens = [WORDNET_LEMMATIZER.lemmatize(token) for token in word_tokenize(text)]
+    tokens = [token for token in word_tokenize(text)]
+    # lemmatize text based on pos tags
+    for pos_tag in POS_TAGS_TO_LEMMATIZE:
+        tokens = [WORDNET_LEMMATIZER.lemmatize(token, pos=pos_tag) for token in word_tokenize(text)]
     # remove stopwords
     tokens = [token for token in tokens if token not in STOPWORDS]
     return tokens
@@ -71,7 +75,7 @@ def build_model():
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(XGBClassifier(n_estimators=100)))
+        ('clf', MultiOutputClassifier(XGBClassifier()))
     ])
 
     parameters = {
@@ -80,8 +84,8 @@ def build_model():
         "clf__estimator__learning_rate":[0.1,]
     }
 
-    cv = GridSearchCV(pipeline, cv=3, param_grid=parameters, verbose=3, n_jobs=-1, scoring="f1_micro")
-    return cv
+    # cv = GridSearchCV(pipeline, cv=3, param_grid=parameters, verbose=3, n_jobs=-1, scoring="f1_micro")
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -96,20 +100,23 @@ def evaluate_model(model, X_test, Y_test, category_names):
     """
     y_preds = model.predict(X_test)
     print(classification_report(y_preds, Y_test.values, target_names=category_names))
-    print("**** Accuracy scores for each category *****\n")
-    for i in range(36):
-        print("Accuracy score for " + Y_test.columns[i], accuracy_score(Y_test.values[:,i],y_preds[:,i]))
+    # collect accuracy scores in a dict
+    category_name_2_accuracy_score = {}
+    for i in range(len(category_names)):
+        category_name_2_accuracy_score[Y_test.columns[i]] = accuracy_score(Y_test.values[:,i],y_preds[:,i])
+    print("Accuracy per category")
+    print(pd.Series(category_name_2_accuracy_score))
 
 
 def save_model(model, model_filepath):
     """
     Save the model to a Python pickle
 
-    Args:
+    Args:s
         model: Trained model
         model_filepath: Path where to save the model
     """
-    pickle.dump(model, open(model_filepath, 'wb'))
+    joblib.dump(model, open(model_filepath, 'wb'))
 
 
 def main():

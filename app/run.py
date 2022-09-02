@@ -120,6 +120,7 @@ def go():
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
+    # make sure the columns below are mapped to the correct labels, or the web app results will be inaccurate
     classification_results = dict(zip(df.columns[2:], classification_labels))
     
     # This will render the go.html Please see that file.
