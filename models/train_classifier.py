@@ -84,8 +84,8 @@ def build_model():
         "clf__estimator__learning_rate":[0.1,]
     }
 
-    # cv = GridSearchCV(pipeline, cv=3, param_grid=parameters, verbose=3, n_jobs=-1, scoring="f1_micro")
-    return pipeline
+    cv = GridSearchCV(pipeline, cv=3, param_grid=parameters, verbose=3, n_jobs=-1, scoring="f1_micro")
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
