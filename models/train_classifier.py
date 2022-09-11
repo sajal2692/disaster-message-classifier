@@ -21,7 +21,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 
 PUNCTUATION_REGEX = re.compile(r"[^\w\s]")
-STOPWORDS = stop_words = stopwords.words('english')
+STOPWORDS = stopwords.words('english')
 WORDNET_LEMMATIZER = WordNetLemmatizer()
 POS_TAGS_TO_LEMMATIZE = ["n", "v"]
 
