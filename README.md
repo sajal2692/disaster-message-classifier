@@ -31,7 +31,7 @@ Please raise an issue if these instructions don't work for you!
 
 ## Further Improvements
 
-This repo sticks to the basics in order to provide a good baseline model for this classification task. There are plenty of room for improvement here, including but not limited to:
+This repo sticks to the basics in order to provide a good baseline model for this classification task. There is plenty of room for improvement here, including but not limited to:
 
 1. Using word embeddings (GloVe, word2vec) or even sentence embeddings (Univsersal Sentgence Encoder) to transform message text, instead of using a CountVectorizer. This should allow the model to generalize well to similar/unseen words and improve the model accuracy too.
 2. A Neural Network can be trained for this task. Better yet, a pre-trained state-of-the-art transformer based network can be fine tuned using the data available to us. 
