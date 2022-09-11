@@ -4,6 +4,8 @@ The Disaster Message Classifier is a set of ETL & ML scripts - combined with a w
 
 This is a portfolio project, offered by Udacity, to showcase data engineering and modelling skills on a small dataset.
 
+A walkthrough notebook for the project can be found [here](https://github.com/sajal2692/disaster-message-classifier/blob/master/notebook/walkthrough.ipynb).
+
 ## Files:
 - `data/process_data.py`: The ETL pipeline used to process data in preparation for model building.
 - `models/train_classifier.py`: The Machine Learning pipeline used to fit, tune, evaluate, and export the model to a Python pickle (pickle is not uploaded to the repo due to size constraints.).
