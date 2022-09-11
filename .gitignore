@@ -1,6 +1,5 @@
 models/*.pkl
 data/*.db
 .ipynb_checkpoints
-*.ipynb
 *.db
 __pycache__
