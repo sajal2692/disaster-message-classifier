@@ -7,11 +7,12 @@ nltk.download(['punkt', 'wordnet'])
 nltk.download('stopwords')
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 import pandas as pd
 from sqlalchemy import create_engine
 from xgboost import XGBClassifier
-from nltk.corpus import stopwords
+
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV
